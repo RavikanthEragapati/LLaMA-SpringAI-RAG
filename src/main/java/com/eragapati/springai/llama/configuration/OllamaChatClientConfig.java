@@ -1,6 +1,8 @@
 package com.eragapati.springai.llama.configuration;
 
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +11,10 @@ import org.springframework.context.annotation.Configuration;
 public class OllamaChatClientConfig {
 
     @Bean
-    ChatClient buildOllamaChatClient(ChatModel chatModel){
-        return ChatClient.builder(chatModel).build();
+    ChatClient buildOllamaChatClient(ChatModel chatModel, ChatMemory chatMemory) {
+
+        return ChatClient.builder(chatModel)
+                .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
+                .build();
     }
 }
