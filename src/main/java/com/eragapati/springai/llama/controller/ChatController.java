@@ -17,31 +17,29 @@ public class ChatController {
 
     /**
      * This endpoint doesnot uses RAG nor the Prompt was built to add context so the outcome will not be streamlined.
-     * @param token - the original token/question
-     * @param id - Will be used in future to track chat history for individual chat id
+     *
+     * @param userPrompt - the original token/question
+     * @param id         - Will be used in future to track chat history for individual chat id
      * @return - Map that contains response
      */
     @GetMapping("/chat/{id}/ask")
     public Map<String, String> ask(
-            @RequestParam(value = "token", defaultValue = "Tell me a joke")
-            String token,
-            @PathVariable
-            long id) {
-        return Map.of("response", llamaPromptService.callAIModel(token));
+            @RequestParam(value = "userPrompt", defaultValue = "Tell me a joke") String userPrompt,
+            @PathVariable String id) {
+        return Map.of("response", llamaPromptService.callAIModel(userPrompt));
     }
 
     /**
      * This endpoint uses RAG and also a custom Prompt is built to add context and attach documents retrieved from VectorStore that have close similarity to the question.
-     * @param token - the original token/question
-     * @param id - Will be used in future to track chat history for individual chat id
+     *
+     * @param userPrompt - the original token/question
+     * @param id         - Will be used in future to track chat history for individual chat id
      * @return - Map that contains response
      */
     @GetMapping("/chat/{id}/askUsingRAG")
     public Map<String, String> askUsingRAG(
-            @RequestParam(value = "token", defaultValue = "Tell me a joke")
-            String token,
-            @PathVariable
-            long id) {
-        return Map.of("response", llamaPromptService.callAIModelUsingRAG(token));
+            @RequestParam(value = "userPrompt", defaultValue = "Tell me a joke") String userPrompt,
+            @PathVariable String id) {
+        return Map.of("response", llamaPromptService.callAIModelUsingRAG(userPrompt, id));
     }
 }

@@ -8,8 +8,10 @@ import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -20,10 +22,29 @@ import java.util.Objects;
 @Service
 @RequiredArgsConstructor
 public class RAGFeederService {
+    private final SimpleVectorStore simpleVectorStore;
     @Value("${vectorstore.simple.offload.path:src/main/resources/vectorstore_backup.json}")
     private String backFileNamePath;
 
-    public void loadFromFiles(SimpleVectorStore simpleVectorStore, String ragFeederPath) {
+    public void loadFromFiles(MultipartFile multipartFile) {
+        File file = null;
+        try {
+            file = new File(multipartFile.getOriginalFilename());
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(multipartFile.getBytes());
+            fos.close();
+            simpleVectorStore.load(file);
+            log.info("Load Complete.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Error loading vector store from file: ${e.message}. starting fresh.", e);
+        } finally {
+            if (file.exists())
+                file.delete();
+        }
+    }
+
+    public void loadFromFiles(String ragFeederPath) {
         if (StringUtils.isBlank(ragFeederPath)) throw new RuntimeException();
 
         List<Document> documents = new ArrayList<>();
@@ -56,7 +77,7 @@ public class RAGFeederService {
         }
     }
 
-    public void offloadToFile(SimpleVectorStore simpleVectorStore) {
+    public void offloadToFile() {
         if (Objects.nonNull(simpleVectorStore)) {
             var file = new File(backFileNamePath);
             log.info("Offloading SimpleVectorStore data into file: ${file.absolutePath}");

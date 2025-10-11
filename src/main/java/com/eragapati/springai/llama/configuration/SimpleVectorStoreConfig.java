@@ -1,6 +1,5 @@
 package com.eragapati.springai.llama.configuration;
 
-import com.eragapati.springai.llama.service.RAGFeederService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.embedding.EmbeddingModel;
@@ -15,7 +14,7 @@ import java.io.File;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class InMemoryVectorStoreConfig {
+public class SimpleVectorStoreConfig {
 
     @Value("${vectorstore.simple.offload.path:/src/main/resources/vectorstore_backup.json}")
     private String restoreFile;
