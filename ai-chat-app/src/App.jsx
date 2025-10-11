@@ -1,40 +1,32 @@
 import React, { useState, useRef, useEffect } from 'react';
-import mockApi from './api';
+import apiService from './api';
 
-// Main App component that contains all logic and rendering
 const App = () => {
-  // State to manage which page to display
   const [currentPage, setCurrentPage] = useState('landing');
-  // State to store the user's name
   const [userName, setUserName] = useState('');
-  // State to store the chat messages
   const [chatMessages, setChatMessages] = useState([]);
-  // State for loading indicators during API calls
   const [isLoading, setIsLoading] = useState(false);
-  // State to simulate a session token from the backend
   const [sessionToken, setSessionToken] = useState(null);
-  // State to manage the collapsible left sidebar
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  // State for the chat input value
   const [chatInput, setChatInput] = useState('');
 
-  // Ref to the chat messages container for auto-scrolling
   const messagesEndRef = useRef(null);
-  // Ref for the textarea to dynamically adjust its height
   const textareaRef = useRef(null);
 
-  // Scrolls the chat view to the bottom whenever a new message is added
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chatMessages]);
 
-  // Dynamically adjust textarea height based on content
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
     }
   }, [chatInput]);
+
+// ###############################################################
+// #################### Handlers & Helpers #######################
+// ###############################################################
 
   // Handler for the landing page form submission
   const handleLandingSubmit = async (e) => {
@@ -43,7 +35,7 @@ const App = () => {
 
     setIsLoading(true);
     try {
-      const response = await mockApi.createSession(userName);
+      const response = await apiService.createSession(userName);
       setSessionToken(response.token);
       setIsLoading(false);
       setCurrentPage('chat');
@@ -68,7 +60,7 @@ const App = () => {
 
     setIsLoading(true);
     try {
-      const response = await mockApi.sendMessage(input);
+      const response = await apiService.sendMessage(input, sessionToken);
       // Add the bot's response to the chat
       setChatMessages(prevMessages => [...prevMessages, { type: 'system', text: response.response }]);
     } catch (error) {
@@ -82,7 +74,7 @@ const App = () => {
   const handleEndChat = async () => {
     setIsLoading(true);
     try {
-      await mockApi.endSession(sessionToken);
+      await apiService.endSession(sessionToken);
       // Reset all states and go back to landing page
       setUserName('');
       setSessionToken(null);
@@ -120,25 +112,25 @@ const App = () => {
             <svg
               className="w-70 h-40 -mt-50"
               fill="none"
-              viewBox="0 0 520 5"
+              viewBox="0 0 780 5"
             >
               <g transform="translate(20,100)">
                 <text font-family="Inter, Helvetica, Arial, sans-serif"
                   font-size="90"
                   font-weight="800"
                   letter-spacing="4">
-                  <tspan fill="#111111">DISC</tspan>
+                  <tspan fill="#111111">Ravi</tspan>
                 </text>
-                <circle cx="270" cy="-33" r="40" fill="#FF7A00" />
+                <circle cx="270" cy="-33" r="40" fill="#51a2ff" />
                 <text font-family="Inter, Helvetica, Arial, sans-serif"
                   font-size="90"
                   font-weight="800"
                   letter-spacing="4">
-                  <tspan x="310" fill="#111111">VER</tspan>
+                  <tspan x="325" fill="#111111"> Eragapati</tspan>
                 </text>
               </g>
             </svg>
-            <h1 className="text-4xl font-extrabold text-gray-900 mb-2">Welcome to CPB KnowledgeBase AI</h1>
+            <h1 className="text-4xl font-extrabold text-gray-900 mb-2">Welcome to My AI ChatBot...</h1>
             <p className="text-gray-500 mb-8">Please enter your name to start a new session.</p>
 
             {/* Form for name input */}
@@ -153,7 +145,7 @@ const App = () => {
               />
               <button
                 type="submit"
-                className="w-full py-3 px-6 bg-orange-400 text-white font-bold rounded-full shadow-lg hover:bg-orange-500 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:bg-orange-400 disabled:cursor-not-allowed"
+                className="w-full py-3 px-6 bg-blue-400 text-white font-bold rounded-full shadow-lg hover:bg-blue-500 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:bg-blue-400 disabled:cursor-not-allowed"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -196,7 +188,7 @@ const App = () => {
                 {!isSidebarCollapsed && (
                   <button
                     onClick={handleEndChat}
-                    className="w-full py-2 px-4 text-sm bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-all duration-300 ease-in-out disabled:bg-orange-400 disabled:cursor-not-allowed"
+                    className="w-full py-2 px-4 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all duration-300 ease-in-out disabled:bg-blue-400 disabled:cursor-not-allowed"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -269,7 +261,7 @@ const App = () => {
                   />
                   <button
                     type="submit"
-                    className="p-3 bg-orange-400 text-white rounded-full shadow-lg hover:bg-orange-500 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:bg-orange-400 disabled:cursor-not-allowed"
+                    className="p-3 bg-blue-400 text-white rounded-full shadow-lg hover:bg-blue-500 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:bg-blue-400 disabled:cursor-not-allowed"
                     disabled={isLoading}
                   >
                     <svg className="w-6 h-6 transform rotate-90" fill="currentColor" viewBox="0 0 20 20">
