@@ -10,6 +10,7 @@ import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class LlamaPromptService {
 
     private final ChatClient chatClient;
     private final VectorStore simpleVectorStore;
+    private final SyncMcpToolCallbackProvider toolCallbackProvider;
+
 
     public String callAIModel(String userPrompt) {
         return this.chatClient.prompt().user(userPrompt).call().content();
@@ -49,8 +52,7 @@ public class LlamaPromptService {
                 .advisors(questionAnswerAdvisor)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .advisors(new SimpleLoggerAdvisor())
-                //.Tools
-                //.MCP tools
+                .toolCallbacks(toolCallbackProvider)
                 .call().content();
     }
 
