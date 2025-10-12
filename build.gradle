@@ -34,6 +34,7 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
     implementation 'org.springframework.ai:spring-ai-starter-model-chat-memory'
     implementation 'org.springframework.ai:spring-ai-advisors-vector-store'
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-client'
     implementation 'org.springframework.ai:spring-ai-rag'
 //    implementation 'org.springframework.ai:spring-ai-pdf-document-reader'
 //    implementation 'org.springframework.ai:spring-ai-tika-document-reader'
